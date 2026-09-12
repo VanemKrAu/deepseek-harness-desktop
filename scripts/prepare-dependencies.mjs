@@ -19,10 +19,44 @@ const settingsGeneralClientPath = path.join(
   'lib',
   'client.js',
 )
+const conversationClientPath = path.join(
+  root,
+  'node_modules',
+  '@deepseek-ai',
+  'dsh-client-ui-conversation',
+  'lib',
+  'client.js',
+)
 const dshManifestPath = path.join(root, 'node_modules', '@deepseek-ai', 'dsh', 'package.json')
 const windowsNodePath = path.join(root, 'assets', 'dsh-node.exe')
 const nodeLicensePath = path.join(root, 'third-party-licenses', 'nodejs-LICENSE')
 export const DSH_MARKET_VERSION = '1.45.1'
+
+// ── auto-approve 权限预设图标补丁 ──────────────────────────────────────────
+// 会话权限下拉的 glyphs 表（dsh-client-ui-conversation）只登记了三个内置预设：
+// read-only / workspace-write / danger-full-access。第三方权限预设（例如
+// dsh-approval-gate 提供的 auto-approve）取不到 glyph，下拉项就没有图标。
+// 这里以 danger-full-access 图标的感叹号 path 为锚点，取其数组项结尾插入
+// 一个同风格的「盾牌 + 闪电」图标（闪电呼应 Flash 判定）。
+const AUTO_APPROVE_GLYPH_MARK = '["auto-approve", (0, react_jsx_runtime.jsxs)("svg"'
+const FULL_ACCESS_GLYPH_ANCHOR = 'M9.10094 9.8114V11.5H7.59888V9.8114H9.10094Z'
+const AUTO_APPROVE_GLYPH_ENTRY = `,
+			["auto-approve", (0, react_jsx_runtime.jsxs)("svg", {
+				width: "16",
+				height: "16",
+				viewBox: "0 0 16 16",
+				fill: "none",
+				"aria-hidden": true,
+				children: [(0, react_jsx_runtime.jsx)("path", {
+					d: shieldOutline,
+					stroke: "currentColor",
+					strokeWidth: "1.31831",
+					strokeLinejoin: "round"
+				}), (0, react_jsx_runtime.jsx)("path", {
+					d: "M9.8 4L6.4 8.7H8.1L7 11.9L10.5 7.2H8.7L9.8 4Z",
+					fill: "currentColor"
+				})]
+			})]`
 
 const ORIGINAL_WINDOWS_OPENER = `async function openWindowsPath(path, signal, run) {
 \tawait run("powershell.exe", [
@@ -238,6 +272,32 @@ export function prepareWindowsNode({
   copyFileSync(licensePath, licenseOutputPath)
 }
 
+/**
+ * 为第三方权限预设 auto-approve 注入下拉图标。幂等；锚点缺失时原样返回，
+ * 使上游结构变化不会阻断安装。
+ * @param source - dsh-client-ui-conversation 的 client.js 源码。
+ * @returns 打过补丁的源码。
+ */
+export function patchPermissionGlyph(source) {
+  if (source.includes(AUTO_APPROVE_GLYPH_MARK)) return source
+  const anchorIdx = source.indexOf(FULL_ACCESS_GLYPH_ANCHOR)
+  if (anchorIdx < 0) return source
+  const itemEnd = source.indexOf('})]', anchorIdx)
+  if (itemEnd < 0) return source
+  const insertAt = itemEnd + 3
+  return source.slice(0, insertAt) + AUTO_APPROVE_GLYPH_ENTRY + source.slice(insertAt)
+}
+
+export function preparePermissionGlyph(target = conversationClientPath) {
+  if (!existsSync(target)) {
+    console.log('[prepare-dependencies] 跳过权限预设图标补丁：目标不存在')
+    return
+  }
+  const source = readFileSync(target, 'utf8')
+  const patched = patchPermissionGlyph(source)
+  if (patched !== source) writeFileSync(target, patched)
+}
+
 function isMainModule() {
   return process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 }
@@ -245,6 +305,7 @@ function isMainModule() {
 if (isMainModule()) {
   prepareApiProxy()
   prepareSettingsMarketNavIcon()
+  preparePermissionGlyph()
   prepareDshManifest()
   prepareWindowsNode()
 }
