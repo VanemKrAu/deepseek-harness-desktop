@@ -18,14 +18,60 @@ export function upstreamDependencyNames(manifest) {
   )
 }
 
-export function updateUpstreamDependencies(manifest, targetVersion) {
-  const packageNames = upstreamDependencyNames(manifest)
-  if (!packageNames.includes('@deepseek-ai/dsh')) {
+/**
+ * Every upstream @deepseek-ai/dsh* package the desktop host must declare
+ * explicitly. DSH's internal packages reference each other through
+ * peerDependencies, so a package that appears in the resolved tree but is not
+ * declared here is only installed when the installer happens to resolve peers
+ * (e.g. `npm install --force`). Declaring them guarantees a complete plugin tree
+ * regardless of install mode — a missing one surfaces at runtime as
+ * `AggregateError: loader entries failed to apply`.
+ *
+ * When upstream splits out a new internal package, add its name here; the sync
+ * script then backfills it on the next version bump.
+ */
+export const REQUIRED_UPSTREAM_PACKAGES = [
+  '@deepseek-ai/dsh',
+  '@deepseek-ai/dsh-anonymous-user-id',
+  '@deepseek-ai/dsh-atomic-write',
+  '@deepseek-ai/dsh-attachment',
+  '@deepseek-ai/dsh-authorization',
+  '@deepseek-ai/dsh-bash-local',
+  '@deepseek-ai/dsh-code-runtime',
+  '@deepseek-ai/dsh-compaction',
+  '@deepseek-ai/dsh-fs',
+  '@deepseek-ai/dsh-hook-protocol',
+  '@deepseek-ai/dsh-invariants',
+  '@deepseek-ai/dsh-jobs',
+  '@deepseek-ai/dsh-output-retention',
+  '@deepseek-ai/dsh-sandbox',
+  '@deepseek-ai/dsh-scope',
+  '@deepseek-ai/dsh-sdk-protocol',
+  '@deepseek-ai/dsh-session-persistence',
+  '@deepseek-ai/dsh-session-query',
+  '@deepseek-ai/dsh-session-telemetry',
+  '@deepseek-ai/dsh-session-title-llm',
+  '@deepseek-ai/dsh-settings',
+  '@deepseek-ai/dsh-shell',
+  '@deepseek-ai/dsh-spill',
+  '@deepseek-ai/dsh-subagent-in-process-driver',
+  '@deepseek-ai/dsh-subprocess',
+  '@deepseek-ai/dsh-timeout',
+  '@deepseek-ai/dsh-util-time',
+  '@deepseek-ai/dsh-util-workspace-path',
+  '@deepseek-ai/dsh-workflow',
+]
+
+export function updateUpstreamDependencies(manifest, targetVersion, {
+  requiredPackages = REQUIRED_UPSTREAM_PACKAGES,
+} = {}) {
+  const declared = upstreamDependencyNames(manifest)
+  if (!declared.includes('@deepseek-ai/dsh')) {
     throw new Error('package.json does not declare @deepseek-ai/dsh')
   }
 
   const currentVersion = manifest.dependencies['@deepseek-ai/dsh']
-  for (const packageName of packageNames) {
+  for (const packageName of declared) {
     if (manifest.dependencies[packageName] !== currentVersion) {
       throw new Error(
         `${packageName} is pinned to ${manifest.dependencies[packageName]}, expected ${currentVersion}`,
@@ -33,10 +79,22 @@ export function updateUpstreamDependencies(manifest, targetVersion) {
     }
   }
 
-  for (const packageName of packageNames) {
+  for (const packageName of declared) {
     manifest.dependencies[packageName] = targetVersion
   }
-  return { currentVersion, packageNames }
+
+  // Backfill upstream packages that are required by the host but were never
+  // declared — the gap the old "only bump existing pins" logic could not see.
+  const added = []
+  for (const packageName of requiredPackages) {
+    if (manifest.dependencies[packageName] === undefined) {
+      manifest.dependencies[packageName] = targetVersion
+      added.push(packageName)
+    }
+  }
+
+  const packageNames = [...new Set([...declared, ...requiredPackages])]
+  return { currentVersion, packageNames, added }
 }
 
 export function updateReadmeVersion(source, currentVersion, targetVersion) {
@@ -157,17 +215,24 @@ function sync() {
     return
   }
 
-  const { packageNames } = updateUpstreamDependencies(manifest, targetVersion)
+  const { packageNames, added } = updateUpstreamDependencies(manifest, targetVersion)
   writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
+  if (added.length > 0) {
+    process.stdout.write(
+      `Backfilled upstream packages newly required by the desktop: ${added.join(', ')}\n`,
+    )
+  }
 
   for (const readmePath of readmePaths) {
     const source = readFileSync(readmePath, 'utf8')
     writeFileSync(readmePath, updateReadmeVersion(source, currentVersion, targetVersion))
   }
 
+  // --force: dshmarket's peerOptional range lags the DSH release train (see
+  // .npmrc); without it the peer conflict aborts lockfile regeneration.
   execFileSync(
     'npm',
-    ['install', '--package-lock-only', '--ignore-scripts', '--no-audit', '--no-fund'],
+    ['install', '--package-lock-only', '--ignore-scripts', '--no-audit', '--no-fund', '--force'],
     { cwd: root, stdio: 'inherit' },
   )
 

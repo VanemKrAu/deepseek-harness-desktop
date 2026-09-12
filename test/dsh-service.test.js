@@ -23,6 +23,13 @@ test('extractReadyUrl reads the canonical loopback readiness URL', () => {
   )
 })
 
+test('extractReadyUrl keeps the auth token query DSH 0.1.5 appends to the readiness URL', () => {
+  assert.equal(
+    extractReadyUrl('booting\ndsh web: http://127.0.0.1:60882/?token=0Xy-Z_9abc\n'),
+    'http://127.0.0.1:60882/?token=0Xy-Z_9abc',
+  )
+})
+
 test('extractReadyUrl ignores non-loopback output', () => {
   assert.equal(extractReadyUrl('dsh web: http://192.168.1.10:3080'), undefined)
 })

@@ -59,6 +59,46 @@ test('updateUpstreamDependencies rejects a mixed upstream pin', () => {
   )
 })
 
+test('updateUpstreamDependencies backfills required packages the host never declared', () => {
+  const manifest = { dependencies: { '@deepseek-ai/dsh': '1.0.0' } }
+
+  const result = updateUpstreamDependencies(manifest, '1.1.0', {
+    requiredPackages: [
+      '@deepseek-ai/dsh',
+      '@deepseek-ai/dsh-jobs',
+      '@deepseek-ai/dsh-settings',
+    ],
+  })
+
+  assert.equal(manifest.dependencies['@deepseek-ai/dsh'], '1.1.0')
+  assert.equal(manifest.dependencies['@deepseek-ai/dsh-jobs'], '1.1.0')
+  assert.equal(manifest.dependencies['@deepseek-ai/dsh-settings'], '1.1.0')
+  assert.deepEqual(result.added, [
+    '@deepseek-ai/dsh-jobs',
+    '@deepseek-ai/dsh-settings',
+  ])
+  assert.deepEqual(result.packageNames, [
+    '@deepseek-ai/dsh',
+    '@deepseek-ai/dsh-jobs',
+    '@deepseek-ai/dsh-settings',
+  ])
+})
+
+test('updateUpstreamDependencies reports no additions when every required package is declared', () => {
+  const manifest = {
+    dependencies: {
+      '@deepseek-ai/dsh': '1.0.0',
+      '@deepseek-ai/dsh-jobs': '1.0.0',
+    },
+  }
+
+  const result = updateUpstreamDependencies(manifest, '1.1.0', {
+    requiredPackages: ['@deepseek-ai/dsh', '@deepseek-ai/dsh-jobs'],
+  })
+
+  assert.deepEqual(result.added, [])
+})
+
 test('updateReadmeVersion only changes the qualified upstream package version', () => {
   assert.equal(
     updateReadmeVersion(

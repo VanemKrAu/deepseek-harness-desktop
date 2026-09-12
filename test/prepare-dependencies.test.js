@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  DSH_MARKET_VERSION,
   encodeWindowsOpenCommand,
   patchDshManifest,
   patchSettingsMarketNavIcon,
@@ -69,7 +70,7 @@ test('DSH dependency fallback includes the bundled plugin market', () => {
   const patched = patchDshManifest(source)
   assert.deepEqual(JSON.parse(patched).dependencies, {
     commander: '^15.0.0',
-    dshmarket: '1.40.0',
+    dshmarket: DSH_MARKET_VERSION,
   })
   assert.equal(patchDshManifest(patched), patched)
 })

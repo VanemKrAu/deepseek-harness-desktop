@@ -22,7 +22,7 @@ const settingsGeneralClientPath = path.join(
 const dshManifestPath = path.join(root, 'node_modules', '@deepseek-ai', 'dsh', 'package.json')
 const windowsNodePath = path.join(root, 'assets', 'dsh-node.exe')
 const nodeLicensePath = path.join(root, 'third-party-licenses', 'nodejs-LICENSE')
-const DSH_MARKET_VERSION = '1.45.1'
+export const DSH_MARKET_VERSION = '1.45.1'
 
 const ORIGINAL_WINDOWS_OPENER = `async function openWindowsPath(path, signal, run) {
 \tawait run("powershell.exe", [
