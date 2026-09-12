@@ -22,7 +22,7 @@ const settingsGeneralClientPath = path.join(
 const dshManifestPath = path.join(root, 'node_modules', '@deepseek-ai', 'dsh', 'package.json')
 const windowsNodePath = path.join(root, 'assets', 'dsh-node.exe')
 const nodeLicensePath = path.join(root, 'third-party-licenses', 'nodejs-LICENSE')
-const DSH_MARKET_VERSION = '1.40.0'
+const DSH_MARKET_VERSION = '1.45.1'
 
 const ORIGINAL_WINDOWS_OPENER = `async function openWindowsPath(path, signal, run) {
 \tawait run("powershell.exe", [
@@ -134,6 +134,15 @@ export function patchWindowsPathOpener(source) {
 }
 
 export function prepareApiProxy(target = apiProxyPath) {
+  // 兼容性：@deepseek-ai/dsh-host-apiproxy 在 0.1.1-rc.2 之后不再发布，DSH 0.1.2+
+  // 生态中不再安装该包（相关能力由上游重构，如 @deepseek-ai/dsh-http-proxy）。
+  // 目标缺失时优雅跳过，避免 npm install 的 postinstall 中断。
+  if (!existsSync(target)) {
+    console.log(
+      '[prepare-dependencies] 跳过 apiproxy Windows opener 补丁：目标不存在（新版 DSH 已不再提供该包）',
+    )
+    return
+  }
   const source = readFileSync(target, 'utf8')
   const patched = patchWindowsPathOpener(source)
   if (patched !== source) writeFileSync(target, patched)
@@ -149,8 +158,21 @@ export function patchSettingsMarketNavIcon(source) {
 }
 
 export function prepareSettingsMarketNavIcon(target = settingsGeneralClientPath) {
+  if (!existsSync(target)) {
+    console.log('[prepare-dependencies] 跳过设置页市场图标补丁：目标不存在')
+    return
+  }
   const source = readFileSync(target, 'utf8')
-  const patched = patchSettingsMarketNavIcon(source)
+  let patched
+  try {
+    patched = patchSettingsMarketNavIcon(source)
+  } catch (err) {
+    // 上游源码结构变化时不影响安装：仅提示（市场入口图标可能不显示，其余功能正常）
+    console.log(
+      `[prepare-dependencies] 跳过设置页市场图标补丁：${err && err.message ? err.message : String(err)}`,
+    )
+    return
+  }
   if (patched !== source) writeFileSync(target, patched)
 }
 
@@ -165,8 +187,20 @@ export function patchDshManifest(source) {
 }
 
 export function prepareDshManifest(target = dshManifestPath) {
+  if (!existsSync(target)) {
+    console.log('[prepare-dependencies] 跳过 dsh 清单补丁：目标不存在')
+    return
+  }
   const source = readFileSync(target, 'utf8')
-  const patched = patchDshManifest(source)
+  let patched
+  try {
+    patched = patchDshManifest(source)
+  } catch (err) {
+    console.log(
+      `[prepare-dependencies] 跳过 dsh 清单补丁：${err && err.message ? err.message : String(err)}`,
+    )
+    return
+  }
   if (patched !== source) writeFileSync(target, patched)
 }
 
@@ -187,14 +221,20 @@ export function prepareWindowsNode({
   licenseOutputPath = nodeLicensePath,
 } = {}) {
   if (platform !== 'win32') return
+
+  // 先复制运行时（功能必需）。部分 Node 安装（精简/绿色包）不自带 LICENSE，
+  // 此时只告警不中断安装；发布打包前可自行补齐该合规文件。
+  mkdirSync(path.dirname(outputPath), { recursive: true })
+  copyFileSync(executablePath, outputPath)
+
   const licensePath = findNodeLicense(executablePath)
   if (!licensePath) {
-    throw new Error(`Could not find the Node.js license next to ${executablePath}`)
+    console.log(
+      `[prepare-dependencies] 未在 ${executablePath} 旁找到 Node.js LICENSE，已跳过 third-party-licenses/nodejs-LICENSE（打包发布前请补齐）`,
+    )
+    return
   }
-
-  mkdirSync(path.dirname(outputPath), { recursive: true })
   mkdirSync(path.dirname(licenseOutputPath), { recursive: true })
-  copyFileSync(executablePath, outputPath)
   copyFileSync(licensePath, licenseOutputPath)
 }
 
