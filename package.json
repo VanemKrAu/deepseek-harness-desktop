@@ -69,6 +69,7 @@
     "productName": "DeepSeek Harness",
     "artifactName": "DeepSeek-Harness-Desktop-${version}-${arch}.${ext}",
     "asar": false,
+    "npmRebuild": false,
     "files": [
       "src/**/*",
       "config/**/*",
@@ -179,6 +180,7 @@
     "@google/genai@1.52.0": true,
     "koffi@3.2.1": true,
     "node-pty@1.2.0-beta.15": true,
-    "protobufjs@7.6.6": true
+    "protobufjs@7.6.6": true,
+    "electron-winstaller@5.4.0": true
   }
 }
