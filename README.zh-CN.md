@@ -28,6 +28,45 @@
 
 <img width="2880" height="1882" alt="DeepSeek Harness Desktop 截图" src="https://github.com/user-attachments/assets/4252ec13-c09b-4e74-996f-cf4d1bcb74c8" />
 
+> [!NOTE]
+> **本仓库是定制 fork**，基于 [agent-earth/deepseek-harness-desktop](https://github.com/agent-earth/deepseek-harness-desktop)（原作者 Steven，MIT 许可与署名保留）。因原仓库 release 长期停留在 `0.1.1-rc.2`，本 fork 自行完成了上游 DSH 升级与打包修复。
+
+## 本 fork 相对上游 0.3.8 的改动
+
+- **内置 DSH 升级到官方最新 `0.1.5-rc.2`**（上游 release 内置 `0.1.1-rc.2`）
+- 依赖同步：`@deepseek-ai/cordis-plugin-group` → `1.0.2`、`dshmarket` → `1.45.1`
+- `scripts/prepare-dependencies.mjs`：3 处硬失败改为容错跳过（上游变更不再中断安装）
+  - `@deepseek-ai/dsh-host-apiproxy` 在 DSH 0.1.2+ 已停止发布 → 目标缺失时跳过该补丁
+  - 精简版 Node（目录内无 LICENSE 文件）→ 只告警，仍复制 `dsh-node.exe`
+  - dsh 清单 / 设置页市场图标补丁 → 增加 `existsSync` + `try/catch`
+- `scripts/build-windows-launcher.ps1`：修复 `.NET Framework64` 下存在语言包目录（如 `1041` / `2052`）时 `[version]` 解析抛错、导致打包中断的问题
+- `package.json`：新增 `build.npmRebuild: false`；放行 `node-pty` / `koffi` / `@deepseek-ai/dsh-subprocess-local` 等原生模块的安装脚本
+
+### 构建须知（本 fork）
+
+```powershell
+npm install --force
+# 必须 --force：dshmarket 的 peerDependencies 只声明到 DSH 0.1.2-alpha.2，与 0.1.5 冲突。
+# 切勿使用 --legacy-peer-deps：它会跳过 peer 安装，导致 dsh-jobs / dsh-settings 等缺失、
+# 整棵插件树加载失败（表现为 dsh web 起不来）。
+
+npm run dist:win
+# 产物：dist/DeepSeek-Harness-Desktop-<version>-windows-x64.exe（NSIS）与 .zip（便携）
+```
+
+`build.npmRebuild: false` 表示跳过 Electron ABI 重编。若本机缺少 Windows SDK，
+需保证 `node_modules/node-pty/build/Release/*.node` 是为当前 Electron 版本编译的产物
+（可从「同一 Electron 版本」的既有安装中复用）；若环境具备完整 Visual Studio + Windows SDK，
+可将该项改为 `true` 交由 electron-builder 自行编译。
+
+### 已知限制（本 fork）
+
+- `@dsh-external/dsh-automation`（定时任务调度）在 DSH 0.1.5 下注册 RPC 时会访问 `owner.webServer`，
+  因 0.1.5 收紧了权限（未 `inject` 即报 `cannot get property "webServer" without inject`）
+  而导致**整棵插件树加载失败**。需在 profile 的 `cordis.patch.yml` 中将其 `disabled: true`；
+  上游该插件（0.1.7）尚未适配。
+- 打包产物未做代码签名，Windows SmartScreen 可能提示。
+
 DeepSeek Harness Desktop 将官方 DeepSeek Harness Web 体验封装为独立桌面应用。无需手动启动 CLI 或管理端口，打开应用即可使用完整 Harness 界面。
 
 本项目专注于桌面宿主能力，不 fork、不修改、不注入，也不重新实现 Harness UI。模型、会话、设置、插件和 Agent 能力均由官方 `@deepseek-ai/dsh` 提供。

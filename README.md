@@ -28,6 +28,41 @@
 
 <img width="2880" height="1882" alt="image" src="https://github.com/user-attachments/assets/4252ec13-c09b-4e74-996f-cf4d1bcb74c8" />
 
+> [!NOTE]
+> **Custom fork** of [agent-earth/deepseek-harness-desktop](https://github.com/agent-earth/deepseek-harness-desktop) (original author Steven; MIT license and attribution preserved). Because upstream releases remained pinned to `0.1.1-rc.2`, this fork performs the bundled-DSH upgrade and the build fixes itself.
+
+**Changes in this fork (vs upstream 0.3.8)**
+
+- Bundled DSH upgraded to the latest official **`0.1.5-rc.2`**
+- Dependency sync: `@deepseek-ai/cordis-plugin-group` → `1.0.2`, `dshmarket` → `1.45.1`
+- `scripts/prepare-dependencies.mjs`: three hard failures are now tolerated instead of aborting install
+  (`dsh-host-apiproxy` no longer published since DSH 0.1.2+, minimal Node installs without a LICENSE file,
+  and changed upstream sources for the dsh-manifest / market-icon patches)
+- `scripts/build-windows-launcher.ps1`: fixed a crash when `.NET Framework64` contains locale directories
+  (e.g. `1041` / `2052`) that fail `[version]` parsing
+- `package.json`: added `build.npmRebuild: false`; install scripts allowed for `node-pty`, `koffi`,
+  `@deepseek-ai/dsh-subprocess-local`, and others
+
+**Building this fork**
+
+```powershell
+npm install --force
+# --force is required: dshmarket declares peer support only up to DSH 0.1.2-alpha.2.
+# Do NOT use --legacy-peer-deps — it skips peer installation, leaving dsh-jobs / dsh-settings
+# missing and breaking the whole plugin tree (dsh web fails to start).
+
+npm run dist:win   # → dist/DeepSeek-Harness-Desktop-<version>-windows-x64.exe (NSIS) and .zip
+```
+
+With `build.npmRebuild: false`, native modules are not rebuilt against the Electron ABI. Either provide
+`node_modules/node-pty/build/Release/*.node` compiled for the bundled Electron version (it can be reused
+from an existing install of the same Electron version), or set the flag back to `true` on a machine with
+a full Visual Studio + Windows SDK toolchain.
+
+**Known limitation**: `@dsh-external/dsh-automation` fails on DSH 0.1.5 because its RPC registration
+accesses `owner.webServer` without injecting it, which aborts the entire plugin tree; disable it in the
+profile's `cordis.patch.yml` until upstream adapts.
+
 DeepSeek Harness Desktop packages the official DeepSeek Harness Web experience as a standalone desktop application. It removes the need to start the CLI manually or manage local ports while preserving the full Harness interface.
 
 This project focuses on desktop hosting. It does not fork, modify, inject into, or reimplement the Harness UI. Models, sessions, settings, plugins, and agent capabilities remain provided by the official `@deepseek-ai/dsh` package.
