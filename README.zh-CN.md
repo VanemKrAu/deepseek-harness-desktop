@@ -18,9 +18,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/agent-earth/deepseek-harness-desktop/releases/latest"><img alt="最新版本" src="https://img.shields.io/github/v/release/agent-earth/deepseek-harness-desktop?style=flat-square&color=171513" /></a>
+  <a href="https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest"><img alt="最新版本" src="https://img.shields.io/github/v/release/VanemKrAu/deepseek-harness-desktop?style=flat-square&color=171513" /></a>
   <a href="LICENSE"><img alt="许可证：MIT" src="https://img.shields.io/badge/License-MIT-171513.svg?style=flat-square" /></a>
-  <a href="https://github.com/agent-earth/deepseek-harness-desktop/actions/workflows/release.yml"><img alt="发行构建" src="https://github.com/agent-earth/deepseek-harness-desktop/actions/workflows/release.yml/badge.svg" /></a>
+  <a href="https://github.com/VanemKrAu/deepseek-harness-desktop/actions/workflows/release.yml"><img alt="发行构建" src="https://github.com/VanemKrAu/deepseek-harness-desktop/actions/workflows/release.yml/badge.svg" /></a>
   <img alt="macOS" src="https://img.shields.io/badge/macOS-Apple%20Silicon%20%7C%20Intel-171513.svg?style=flat-square" />
   <img alt="Windows" src="https://img.shields.io/badge/Windows-x64-171513.svg?style=flat-square" />
   <img alt="Linux" src="https://img.shields.io/badge/Linux-x64-171513.svg?style=flat-square" />
@@ -30,10 +30,12 @@
 
 > [!NOTE]
 > **本仓库是定制 fork**，基于 [agent-earth/deepseek-harness-desktop](https://github.com/agent-earth/deepseek-harness-desktop)（原作者 Steven，MIT 许可与署名保留）。因原仓库 release 长期停留在 `0.1.1-rc.2`，本 fork 自行完成了上游 DSH 升级与打包修复。
+>
+> 本仓库发布的安装包由本仓库自己的 tag 触发流水线（`.github/workflows/release.yml`）构建，内置 DSH **`0.1.5-rc.2`**。上游 `agent-earth/…` 仍在发布它自己的安装包（内置 `0.1.1-rc.2`），且**文件名与本仓库完全相同** —— 要拿到下文列出的修复，请从本仓库下载。本仓库首个 tag 发布落地之前，请按「构建须知」自行打包。
 
-## 本 fork 相对上游 0.3.8 的改动
+## 本 fork 相对上游 `0.3.8`（上游当前 release）的改动
 
-- **内置 DSH 升级到官方最新 `0.1.5-rc.2`**（上游 release 内置 `0.1.1-rc.2`）
+- **内置 DSH 从 `0.1.1-rc.2` 升级到 `0.1.5-rc.2`**（npm 的 `next` 通道；`latest` 仍是 `0.1.5-rc.1`）
 - 依赖同步：`@deepseek-ai/cordis-plugin-group` → `1.0.2`、`dshmarket` → `1.45.1`
 - `scripts/prepare-dependencies.mjs`：3 处硬失败改为容错跳过（上游变更不再中断安装）
   - `@deepseek-ai/dsh-host-apiproxy` 在 DSH 0.1.2+ 已停止发布 → 目标缺失时跳过该补丁
@@ -78,14 +80,14 @@ DeepSeek Harness Desktop 将官方 DeepSeek Harness Web 体验封装为独立桌
 
 | 平台 | 架构 | 安装包 | 下载 |
 | --- | --- | --- | --- |
-| macOS | Apple Silicon | DMG | [下载 Apple Silicon 版本](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-arm64.dmg) |
-| macOS | Intel | DMG | [下载 Intel 版本](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-x64.dmg) |
-| Windows | x64 | 安装程序 | [下载 Windows 安装程序](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-windows-x64.exe) |
-| Windows | x64 | 便携 ZIP | [下载 Windows ZIP](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-windows-x64.zip) |
-| Linux | x64 | AppImage | [下载 AppImage](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-linux-x86_64.AppImage) |
-| Debian / Ubuntu | x64 | deb | [下载 deb](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-linux-amd64.deb) |
+| macOS | Apple Silicon | DMG | [下载 Apple Silicon 版本](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-arm64.dmg) |
+| macOS | Intel | DMG | [下载 Intel 版本](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-x64.dmg) |
+| Windows | x64 | 安装程序 | [下载 Windows 安装程序](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-windows-x64.exe) |
+| Windows | x64 | 便携 ZIP | [下载 Windows ZIP](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-windows-x64.zip) |
+| Linux | x64 | AppImage | [下载 AppImage](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-linux-x86_64.AppImage) |
+| Debian / Ubuntu | x64 | deb | [下载 deb](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-linux-amd64.deb) |
 
-全部当前和历史安装包可在 [GitHub Releases](https://github.com/agent-earth/deepseek-harness-desktop/releases) 查看，也可以通过夸克网盘镜像下载：[夸克网盘 - DeepSeek Harness Desktop v0.3.1](https://pan.quark.cn/s/e2dfc232c52d)
+全部当前和历史安装包可在 [GitHub Releases](https://github.com/VanemKrAu/deepseek-harness-desktop/releases) 查看；另有社区夸克网盘镜像：[夸克网盘镜像](https://pan.quark.cn/s/e2dfc232c52d)（镜像内容可能落后于最新 release）。
 
 ## 为什么需要桌面版
 
@@ -121,7 +123,7 @@ DeepSeek Harness 已经提供完整的 Agent Runtime 和 Web UI。本项目不�
 
 打开“**设置 → Plugin Market**”即可浏览和搜索社区插件，查看插件来源，并执行安装、更新、停用或卸载。插件目录实时读取自 [awesome-dsh-plugin.com](https://awesome-dsh-plugin.com)，插件变更仍通过官方 `dsh plugin --profile web` 流程完成，并保存在本机 DSH profile 中。
 
-桌面安装包内置 `dshmarket@1.40.0` 和兼容的 pnpm 运行时。由于应用生命周期由桌面宿主管理，市场内的一键进程重启已关闭；当插件提示需要重启时，请刷新页面或重新启动 DeepSeek Harness Desktop。
+桌面安装包内置 `dshmarket@1.45.1` 和兼容的 pnpm 运行时（`pnpm@10.34.5`）。由于应用生命周期由桌面宿主管理，市场内的一键进程重启已关闭；当插件提示需要重启时，请刷新页面或重新启动 DeepSeek Harness Desktop。
 
 ### SSH 与远程运维
 
@@ -197,7 +199,7 @@ DeepSeek Harness Desktop
 | Windows x64 | NSIS / ZIP 通过 | 通过 | HTTP 200 |
 | Linux x64 | AppImage / deb 通过 | 通过 | HTTP 200 |
 
-所有发行包都由匹配平台的 GitHub-hosted runner 构建，并在发布前执行打包后 smoke test。
+以上结果来自本仓库由版本 tag 触发的 `.github/workflows/release.yml` 流水线 —— 它会在匹配平台的 GitHub-hosted runner 上构建每个安装包，并在发布前执行打包后 smoke test。Windows 的 NSIS/ZIP 构建（`npm run dist:win`）另外已在本机完成构建与验证。fork 的构建同样没有 Apple 公证与商业代码签名。
 
 ## 已知限制
 
@@ -206,6 +208,7 @@ DeepSeek Harness Desktop
 - Windows 尚未接入商业代码签名，首次启动可能出现 SmartScreen
 - 尚未提供 Windows ARM64 和 Linux ARM64 构建
 - 尚未集成自动更新
+- 本 fork 的 `version` 仍与上游同步（`0.3.8`），安装包文件名与上游相同 —— 请按「来自哪个仓库 + 内置 DSH 版本」区分，而不是文件名
 
 ## 上游版本与许可
 

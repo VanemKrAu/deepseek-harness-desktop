@@ -18,9 +18,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/agent-earth/deepseek-harness-desktop/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/agent-earth/deepseek-harness-desktop?style=flat-square&color=171513" /></a>
+  <a href="https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/VanemKrAu/deepseek-harness-desktop?style=flat-square&color=171513" /></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-171513.svg?style=flat-square" /></a>
-  <a href="https://github.com/agent-earth/deepseek-harness-desktop/actions/workflows/release.yml"><img alt="Release build" src="https://github.com/agent-earth/deepseek-harness-desktop/actions/workflows/release.yml/badge.svg" /></a>
+  <a href="https://github.com/VanemKrAu/deepseek-harness-desktop/actions/workflows/release.yml"><img alt="Release build" src="https://github.com/VanemKrAu/deepseek-harness-desktop/actions/workflows/release.yml/badge.svg" /></a>
   <img alt="macOS" src="https://img.shields.io/badge/macOS-Apple%20Silicon%20%7C%20Intel-171513.svg?style=flat-square" />
   <img alt="Windows" src="https://img.shields.io/badge/Windows-x64-171513.svg?style=flat-square" />
   <img alt="Linux" src="https://img.shields.io/badge/Linux-x64-171513.svg?style=flat-square" />
@@ -30,10 +30,12 @@
 
 > [!NOTE]
 > **Custom fork** of [agent-earth/deepseek-harness-desktop](https://github.com/agent-earth/deepseek-harness-desktop) (original author Steven; MIT license and attribution preserved). Because upstream releases remained pinned to `0.1.1-rc.2`, this fork performs the bundled-DSH upgrade and the build fixes itself.
+>
+> Installers published under **this** repository are produced by its own tag-triggered `.github/workflows/release.yml` and bundle DSH **`0.1.5-rc.2`**. Upstream (`agent-earth/…`) keeps publishing its own installers — still bundling `0.1.1-rc.2` — under the **same file names**, so download from this repository to get the fixes listed below. Before the first tagged release lands here, build from source via [Building this fork](#building-this-fork).
 
-**Changes in this fork (vs upstream 0.3.8)**
+**Changes in this fork (vs upstream `0.3.8`, the current upstream release)**
 
-- Bundled DSH upgraded to the latest official **`0.1.5-rc.2`**
+- Bundled DSH upgraded from `0.1.1-rc.2` to **`0.1.5-rc.2`** (the npm `next` dist-tag; `latest` is still `0.1.5-rc.1`)
 - Dependency sync: `@deepseek-ai/cordis-plugin-group` → `1.0.2`, `dshmarket` → `1.45.1`
 - `scripts/prepare-dependencies.mjs`: three hard failures are now tolerated instead of aborting install
   (`dsh-host-apiproxy` no longer published since DSH 0.1.2+, minimal Node installs without a LICENSE file,
@@ -74,14 +76,14 @@ This project focuses on desktop hosting. It does not fork, modify, inject into, 
 
 | Platform | Architecture | Package | Download |
 | --- | --- | --- | --- |
-| macOS | Apple Silicon | DMG | [Download for Apple Silicon](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-arm64.dmg) |
-| macOS | Intel | DMG | [Download for Intel Mac](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-x64.dmg) |
-| Windows | x64 | Setup installer | [Download Windows installer](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-windows-x64.exe) |
-| Windows | x64 | Portable ZIP | [Download Windows ZIP](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-windows-x64.zip) |
-| Linux | x64 | AppImage | [Download AppImage](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-linux-x86_64.AppImage) |
-| Debian / Ubuntu | x64 | deb | [Download deb](https://github.com/agent-earth/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-linux-amd64.deb) |
+| macOS | Apple Silicon | DMG | [Download for Apple Silicon](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-arm64.dmg) |
+| macOS | Intel | DMG | [Download for Intel Mac](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-x64.dmg) |
+| Windows | x64 | Setup installer | [Download Windows installer](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-windows-x64.exe) |
+| Windows | x64 | Portable ZIP | [Download Windows ZIP](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-windows-x64.zip) |
+| Linux | x64 | AppImage | [Download AppImage](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-linux-x86_64.AppImage) |
+| Debian / Ubuntu | x64 | deb | [Download deb](https://github.com/VanemKrAu/deepseek-harness-desktop/releases/latest/download/DeepSeek-Harness-Desktop-latest-linux-amd64.deb) |
 
-All current and historical packages are available on the [GitHub Releases page](https://github.com/agent-earth/deepseek-harness-desktop/releases), and you can also download from the Quark Drive mirror: [Quark Drive - DeepSeek Harness Desktop v0.3.1](https://pan.quark.cn/s/e2dfc232c52d)
+All current and historical packages are available on the [GitHub Releases page](https://github.com/VanemKrAu/deepseek-harness-desktop/releases); a community Quark Drive mirror is also available: [Quark Drive mirror](https://pan.quark.cn/s/e2dfc232c52d) (mirror contents may lag behind the latest release).
 
 ## Why this project exists
 
@@ -117,7 +119,7 @@ DeepSeek Harness already provides the complete agent runtime and Web UI. This pr
 
 Open **Settings → Plugin Market** to browse and search the community catalog, inspect plugin sources, and install, update, disable, or remove plugins. The catalog is fetched live from [awesome-dsh-plugin.com](https://awesome-dsh-plugin.com), while package changes use the official `dsh plugin --profile web` workflow and remain in your local DSH profile.
 
-The desktop package includes `dshmarket@1.40.0` and a compatible pnpm runtime. Market-triggered process restart is disabled because application lifecycle remains owned by the desktop host; refresh the page or restart DeepSeek Harness Desktop when a plugin indicates that a restart is required.
+The desktop package includes `dshmarket@1.45.1` and a compatible pnpm runtime (`pnpm@10.34.5`). Market-triggered process restart is disabled because application lifecycle remains owned by the desktop host; refresh the page or restart DeepSeek Harness Desktop when a plugin indicates that a restart is required.
 
 ### SSH and remote operations
 
@@ -193,7 +195,7 @@ DeepSeek Harness Desktop
 | Windows x64 | NSIS / ZIP passed | Passed | HTTP 200 |
 | Linux x64 | AppImage / deb passed | Passed | HTTP 200 |
 
-Every release package is built on a matching GitHub-hosted runner and runs a packaged-app smoke test before publication.
+These results come from the tag-triggered `.github/workflows/release.yml` pipeline in this repository, which builds every package on a matching GitHub-hosted runner and runs a packaged-app smoke test before publication. The Windows NSIS/ZIP build (`npm run dist:win`) has additionally been built and verified locally. Fork builds receive no Apple notarization and no commercial code signing.
 
 ## Known limitations
 
@@ -202,6 +204,7 @@ Every release package is built on a matching GitHub-hosted runner and runs a pac
 - Commercial Windows code signing is not integrated, so SmartScreen may appear
 - Windows ARM64 and Linux ARM64 packages are not currently provided
 - Automatic updates are not integrated
+- This fork's `version` still tracks upstream (`0.3.8`), so its installer file names match upstream's — identify a build by its repository and bundled DSH version, not by the file name
 
 ## Upstream version and license
 
