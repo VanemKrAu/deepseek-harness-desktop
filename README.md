@@ -31,7 +31,7 @@
 > [!NOTE]
 > **Custom fork** of [agent-earth/deepseek-harness-desktop](https://github.com/agent-earth/deepseek-harness-desktop) (original author Steven; MIT license and attribution preserved). Because upstream releases remained pinned to `0.1.1-rc.2`, this fork performs the bundled-DSH upgrade and the build fixes itself.
 >
-> Installers published under **this** repository are produced by its own tag-triggered `.github/workflows/release.yml` and bundle DSH **`0.1.5-rc.2`**. Upstream (`agent-earth/…`) keeps publishing its own installers — still bundling `0.1.1-rc.2` — under the **same file names**, so download from this repository to get the fixes listed below. Before the first tagged release lands here, build from source via [Building this fork](#building-this-fork).
+> Installers published under **this** repository are produced by its own tag-triggered `.github/workflows/release.yml` and bundle DSH **`0.1.5-rc.2`** (fork version `0.3.9`). Upstream (`agent-earth/…`) publishes its installers as `0.3.8`, which still bundle `0.1.1-rc.2` — pick the `0.3.9` packages from this repository to get the fixes listed below.
 
 **Changes in this fork (vs upstream `0.3.8`, the current upstream release)**
 
@@ -204,7 +204,7 @@ These results come from the tag-triggered `.github/workflows/release.yml` pipeli
 - Commercial Windows code signing is not integrated, so SmartScreen may appear
 - Windows ARM64 and Linux ARM64 packages are not currently provided
 - Automatic updates are not integrated
-- This fork's `version` still tracks upstream (`0.3.8`), so its installer file names match upstream's — identify a build by its repository and bundled DSH version, not by the file name
+- This fork's version (`0.3.9`) is now ahead of upstream (`0.3.8`); earlier fork builds shared upstream's `0.3.8` number, so for an older file check its bundled DSH version instead (`0.1.5-rc.2` = this fork, `0.1.1-rc.2` = upstream)
 
 ## Upstream version and license
 

@@ -31,7 +31,7 @@
 > [!NOTE]
 > **本仓库是定制 fork**，基于 [agent-earth/deepseek-harness-desktop](https://github.com/agent-earth/deepseek-harness-desktop)（原作者 Steven，MIT 许可与署名保留）。因原仓库 release 长期停留在 `0.1.1-rc.2`，本 fork 自行完成了上游 DSH 升级与打包修复。
 >
-> 本仓库发布的安装包由本仓库自己的 tag 触发流水线（`.github/workflows/release.yml`）构建，内置 DSH **`0.1.5-rc.2`**。上游 `agent-earth/…` 仍在发布它自己的安装包（内置 `0.1.1-rc.2`），且**文件名与本仓库完全相同** —— 要拿到下文列出的修复，请从本仓库下载。本仓库首个 tag 发布落地之前，请按「构建须知」自行打包。
+> 本仓库发布的安装包由本仓库自己的 tag 触发流水线（`.github/workflows/release.yml`）构建，内置 DSH **`0.1.5-rc.2`**（本 fork 版本号 `0.3.9`）。上游 `agent-earth/…` 的安装包是 `0.3.8`、内置仍是 `0.1.1-rc.2` —— 要拿到下文列出的修复，请认准本仓库的 `0.3.9` 安装包。
 
 ## 本 fork 相对上游 `0.3.8`（上游当前 release）的改动
 
@@ -208,7 +208,7 @@ DeepSeek Harness Desktop
 - Windows 尚未接入商业代码签名，首次启动可能出现 SmartScreen
 - 尚未提供 Windows ARM64 和 Linux ARM64 构建
 - 尚未集成自动更新
-- 本 fork 的 `version` 仍与上游同步（`0.3.8`），安装包文件名与上游相同 —— 请按「来自哪个仓库 + 内置 DSH 版本」区分，而不是文件名
+- 本 fork 版本号（`0.3.9`）已领先上游（`0.3.8`）；更早的 fork 构建与上游同为 `0.3.8`，如果你手上有旧文件，请按内置 DSH 版本判断（`0.1.5-rc.2` = 本 fork，`0.1.1-rc.2` = 上游）
 
 ## 上游版本与许可
 
