@@ -134,7 +134,27 @@ const service = startDshService({
 
 try {
   const url = await service.ready
-  const response = await fetch(url)
+
+  // DSH 0.1.5 起 Web 服务要求认证：就绪行打印的 URL 带一次性进程 token，
+  // 携带该 token 的 GET / 会返回 303 + Set-Cookie（会话 cookie），之后所有请求认 cookie。
+  // Node 的 fetch 默认跟随重定向但不保存 cookie，所以这里手动完成 token 交换并把 cookie 带上。
+  const exchange = await fetch(url, { redirect: 'manual' })
+  if (exchange.status !== 303) {
+    throw new Error(
+      `Packaged DeepSeek Harness token exchange returned HTTP ${exchange.status} (expected 303)`,
+    )
+  }
+  const sessionCookie = (exchange.headers.getSetCookie?.() ?? [])
+    .map((value) => value.split(';')[0])
+    .filter(Boolean)
+    .join('; ')
+  if (!sessionCookie) {
+    throw new Error('Packaged DeepSeek Harness token exchange did not issue a session cookie')
+  }
+  const authenticatedFetch = (pathname) =>
+    fetch(new URL(pathname, url), { headers: { cookie: sessionCookie } })
+
+  const response = await authenticatedFetch('/')
   if (!response.ok) {
     throw new Error(`Packaged DeepSeek Harness returned HTTP ${response.status}`)
   }
@@ -145,7 +165,7 @@ try {
   if (!html.includes('dshmarket/client')) {
     throw new Error('Packaged app did not inject the plugin market client')
   }
-  const marketResponse = await fetch(`${url}/dsh-market/status`)
+  const marketResponse = await authenticatedFetch('/dsh-market/status')
   if (!marketResponse.ok) {
     throw new Error(`Packaged plugin market returned HTTP ${marketResponse.status}`)
   }
@@ -162,7 +182,11 @@ try {
   if (process.platform === 'win32' && !html.includes('@deepseek-ai/dsh-client-ui-directory-picker-browse')) {
     throw new Error('Packaged Windows app did not mount the browse directory picker')
   }
-  console.log(`packaged smoke: ${response.status} ${url}, dshmarket ${marketStatus.version}, pnpm ready`)
+  const displayUrl = new URL(url)
+  displayUrl.searchParams.delete('token')
+  console.log(
+    `packaged smoke: ${response.status} ${displayUrl.href}, dshmarket ${marketStatus.version}, pnpm ready`,
+  )
 } finally {
   service.stop()
   if (service.child.exitCode === null) {
