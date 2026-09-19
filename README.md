@@ -31,11 +31,17 @@
 > [!NOTE]
 > **Custom fork** of [agent-earth/deepseek-harness-desktop](https://github.com/agent-earth/deepseek-harness-desktop) (original author Steven; MIT license and attribution preserved). Because upstream releases remained pinned to `0.1.1-rc.2`, this fork performs the bundled-DSH upgrade and the build fixes itself.
 >
-> Installers published under **this** repository are produced by its own tag-triggered `.github/workflows/release.yml` and bundle DSH **`0.1.5-rc.2`** (fork version `0.3.9`). Upstream (`agent-earth/…`) publishes its installers as `0.3.8`, which still bundle `0.1.1-rc.2` — pick the `0.3.9` packages from this repository to get the fixes listed below.
+> Installers published under **this** repository are produced by its own tag-triggered `.github/workflows/release.yml` and bundle DSH **`0.1.6-alpha.2`** (fork version `0.3.10`). Upstream (`agent-earth/…`) publishes its installers as `0.3.8`, which still bundle `0.1.1-rc.2` — pick the `0.3.10` packages from this repository to get the fixes listed below.
 
 **Changes in this fork (vs upstream `0.3.8`, the current upstream release)**
 
-- Bundled DSH upgraded from `0.1.1-rc.2` to **`0.1.5-rc.2`** (the npm `next` dist-tag; `latest` is still `0.1.5-rc.1`)
+- Bundled DSH upgraded from `0.1.1-rc.2` to **`0.1.6-alpha.2`** (the npm `alpha` dist-tag; `latest` is still `0.1.5-rc.2`)
+- Session-list ordering: DSH 0.1.6 reworks the sidebar so the order is derived from the current list
+  snapshot on every render instead of a one-shot sort plus incremental promotion. Earlier versions could
+  freeze a wrong order permanently once the first sort ran against a partially loaded list
+- Dependency manifest: dropped `@deepseek-ai/dsh-code-runtime` (no longer published upstream at 0.1.5+)
+  and backfilled seven upstream packages newly required at 0.1.6 (`dsh-hmr`, `dsh-mcp-resources`,
+  `dsh-plugin-manager`, `dsh-workflow-ptc`, `dsh-atomic-write`, and the two agent-team profile packages)
 - Dependency sync: `@deepseek-ai/cordis-plugin-group` → `1.0.2`, `dshmarket` → `1.45.1`
 - `scripts/prepare-dependencies.mjs`: three hard failures are now tolerated instead of aborting install
   (`dsh-host-apiproxy` no longer published since DSH 0.1.2+, minimal Node installs without a LICENSE file,
@@ -61,16 +67,16 @@ With `build.npmRebuild: false`, native modules are not rebuilt against the Elect
 from an existing install of the same Electron version), or set the flag back to `true` on a machine with
 a full Visual Studio + Windows SDK toolchain.
 
-**Known limitation**: `@dsh-external/dsh-automation` fails on DSH 0.1.5 because its RPC registration
-accesses `owner.webServer` without injecting it, which aborts the entire plugin tree; disable it in the
-profile's `cordis.patch.yml` until upstream adapts.
+**Known limitation**: `@dsh-external/dsh-automation` fails on DSH 0.1.5 and later because its RPC
+registration accesses `owner.webServer` without injecting it, which aborts the entire plugin tree;
+disable it in the profile's `cordis.patch.yml` until upstream adapts.
 
 DeepSeek Harness Desktop packages the official DeepSeek Harness Web experience as a standalone desktop application. It removes the need to start the CLI manually or manage local ports while preserving the full Harness interface.
 
 This project focuses on desktop hosting. It does not fork, modify, inject into, or reimplement the Harness UI. Models, sessions, settings, plugins, and agent capabilities remain provided by the official `@deepseek-ai/dsh` package.
 
 > [!IMPORTANT]
-> This is an unofficial community wrapper and an early-stage project. It depends on the rapidly evolving `@deepseek-ai/dsh@0.1.5-rc.2`. The macOS builds are not Apple-notarized, and the Windows builds are not commercially code-signed.
+> This is an unofficial community wrapper and an early-stage project. It depends on the rapidly evolving `@deepseek-ai/dsh@0.1.6-alpha.2`. The macOS builds are not Apple-notarized, and the Windows builds are not commercially code-signed.
 
 ## Download
 
@@ -204,11 +210,11 @@ These results come from the tag-triggered `.github/workflows/release.yml` pipeli
 - Commercial Windows code signing is not integrated, so SmartScreen may appear
 - Windows ARM64 and Linux ARM64 packages are not currently provided
 - Automatic updates are not integrated
-- This fork's version (`0.3.9`) is now ahead of upstream (`0.3.8`); earlier fork builds shared upstream's `0.3.8` number, so for an older file check its bundled DSH version instead (`0.1.5-rc.2` = this fork, `0.1.1-rc.2` = upstream)
+- This fork's version (`0.3.10`) is ahead of upstream (`0.3.8`); earlier fork builds shared upstream's `0.3.8` number, so for an older file check its bundled DSH version instead (`0.1.6-alpha.2` / `0.1.5-rc.2` = this fork, `0.1.1-rc.2` = upstream)
 
 ## Upstream version and license
 
-The project currently pins `@deepseek-ai/dsh@0.1.5-rc.2` for reproducible packaging.
+The project currently pins `@deepseek-ai/dsh@0.1.6-alpha.2` for reproducible packaging.
 
 The desktop wrapper is available under the [MIT License](LICENSE). The bundled DeepSeek Harness, dsh-market, and pnpm packages are also MIT-licensed; their notices are preserved under [`third-party-licenses`](third-party-licenses).
 

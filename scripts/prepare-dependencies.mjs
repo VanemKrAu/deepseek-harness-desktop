@@ -19,11 +19,11 @@ const settingsGeneralClientPath = path.join(
   'lib',
   'client.js',
 )
-const conversationClientPath = path.join(
+const permissionPresetsClientPath = path.join(
   root,
   'node_modules',
   '@deepseek-ai',
-  'dsh-client-ui-conversation',
+  'dsh-client-ui-permission-presets',
   'lib',
   'client.js',
 )
@@ -38,8 +38,10 @@ export const DSH_MARKET_VERSION = '1.45.1'
 // dsh-approval-gate 提供的 auto-approve）取不到 glyph，下拉项就没有图标。
 // 这里以 danger-full-access 图标的感叹号 path 为锚点，取其数组项结尾插入
 // 一个同风格的「盾牌 + 闪电」图标（闪电呼应 Flash 判定）。
-const AUTO_APPROVE_GLYPH_MARK = '["auto-approve", (0, react_jsx_runtime.jsxs)("svg"'
+const AUTO_APPROVE_GLYPH_MARK = '["auto-approve"'
 const FULL_ACCESS_GLYPH_ANCHOR = 'M9.10094 9.8114V11.5H7.59888V9.8114H9.10094Z'
+const ITEM_TAIL = '\t\t\t})]'
+const MAP_TAIL = ITEM_TAIL + '\n\t\t]);'
 const AUTO_APPROVE_GLYPH_ENTRY = `,
 			["auto-approve", (0, react_jsx_runtime.jsxs)("svg", {
 				width: "16",
@@ -48,9 +50,9 @@ const AUTO_APPROVE_GLYPH_ENTRY = `,
 				fill: "none",
 				"aria-hidden": true,
 				children: [(0, react_jsx_runtime.jsx)("path", {
-					d: shieldOutline,
+					d: _deepseek_ai_dsh_client_ui_primitives.SHIELD_OUTLINE_PATH,
 					stroke: "currentColor",
-					strokeWidth: "1.31831",
+					strokeWidth: _deepseek_ai_dsh_client_ui_primitives.SHIELD_OUTLINE_STROKE,
 					strokeLinejoin: "round"
 				}), (0, react_jsx_runtime.jsx)("path", {
 					d: "M9.8 4L6.4 8.7H8.1L7 11.9L10.5 7.2H8.7L9.8 4Z",
@@ -273,28 +275,45 @@ export function prepareWindowsNode({
 }
 
 /**
- * 为第三方权限预设 auto-approve 注入下拉图标。幂等；锚点缺失时原样返回，
- * 使上游结构变化不会阻断安装。
- * @param source - dsh-client-ui-conversation 的 client.js 源码。
+ * 为第三方权限预设 auto-approve 注入下拉图标。幂等；锚点漂移时抛错，
+ * 由调用方决定是告警还是中断（安装期的 preparePermissionGlyph 记日志跳过）。
+ *
+ * DSH 0.1.6 把这张 glyph 表从 dsh-client-ui-conversation 搬到了
+ * dsh-client-ui-permission-presets，并改用 primitives 常量引用。锚点漂移
+ * 必须显式报出来，否则补丁会静默失效、图标悄悄消失。
+ * @param source - dsh-client-ui-permission-presets 的 client.js 源码。
  * @returns 打过补丁的源码。
  */
 export function patchPermissionGlyph(source) {
   if (source.includes(AUTO_APPROVE_GLYPH_MARK)) return source
   const anchorIdx = source.indexOf(FULL_ACCESS_GLYPH_ANCHOR)
-  if (anchorIdx < 0) return source
-  const itemEnd = source.indexOf('})]', anchorIdx)
-  if (itemEnd < 0) return source
-  const insertAt = itemEnd + 3
+  if (anchorIdx < 0) {
+    throw new Error('Expected the full-access permission glyph in dsh-client-ui-permission-presets')
+  }
+  const tailIdx = source.indexOf(MAP_TAIL, anchorIdx)
+  if (tailIdx < 0) {
+    throw new Error('Expected the permission glyph map tail after the full-access glyph')
+  }
+  const insertAt = tailIdx + ITEM_TAIL.length
   return source.slice(0, insertAt) + AUTO_APPROVE_GLYPH_ENTRY + source.slice(insertAt)
 }
 
-export function preparePermissionGlyph(target = conversationClientPath) {
+export function preparePermissionGlyph(target = permissionPresetsClientPath) {
   if (!existsSync(target)) {
     console.log('[prepare-dependencies] 跳过权限预设图标补丁：目标不存在')
     return
   }
   const source = readFileSync(target, 'utf8')
-  const patched = patchPermissionGlyph(source)
+  let patched
+  try {
+    patched = patchPermissionGlyph(source)
+  } catch (err) {
+    // 上游结构变化时不阻断安装：仅提示（auto-approve 预设可能没有下拉图标）
+    console.log(
+      `[prepare-dependencies] 跳过权限预设图标补丁：${err && err.message ? err.message : String(err)}`,
+    )
+    return
+  }
   if (patched !== source) writeFileSync(target, patched)
 }
 

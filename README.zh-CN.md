@@ -31,11 +31,16 @@
 > [!NOTE]
 > **本仓库是定制 fork**，基于 [agent-earth/deepseek-harness-desktop](https://github.com/agent-earth/deepseek-harness-desktop)（原作者 Steven，MIT 许可与署名保留）。因原仓库 release 长期停留在 `0.1.1-rc.2`，本 fork 自行完成了上游 DSH 升级与打包修复。
 >
-> 本仓库发布的安装包由本仓库自己的 tag 触发流水线（`.github/workflows/release.yml`）构建，内置 DSH **`0.1.5-rc.2`**（本 fork 版本号 `0.3.9`）。上游 `agent-earth/…` 的安装包是 `0.3.8`、内置仍是 `0.1.1-rc.2` —— 要拿到下文列出的修复，请认准本仓库的 `0.3.9` 安装包。
+> 本仓库发布的安装包由本仓库自己的 tag 触发流水线（`.github/workflows/release.yml`）构建，内置 DSH **`0.1.6-alpha.2`**（本 fork 版本号 `0.3.10`）。上游 `agent-earth/…` 的安装包是 `0.3.8`、内置仍是 `0.1.1-rc.2` —— 要拿到下文列出的修复，请认准本仓库的 `0.3.10` 安装包。
 
 ## 本 fork 相对上游 `0.3.8`（上游当前 release）的改动
 
-- **内置 DSH 从 `0.1.1-rc.2` 升级到 `0.1.5-rc.2`**（npm 的 `next` 通道；`latest` 仍是 `0.1.5-rc.1`）
+- **内置 DSH 从 `0.1.1-rc.2` 升级到 `0.1.6-alpha.2`**（npm 的 `alpha` 通道；`latest` 仍是 `0.1.5-rc.2`）
+- **会话列表排序修复**：DSH 0.1.6 重写了侧栏排序，改为每次渲染从当前列表快照派生，
+  不再使用「一次性排序 + 增量置顶」。旧版本在首次排序时若列表尚未加载完，会把错误顺序永久固化
+- 依赖清单调整：移除上游 0.1.5+ 已停止发布的 `@deepseek-ai/dsh-code-runtime`；
+  补齐 0.1.6 新增的 7 个上游包（`dsh-hmr`、`dsh-mcp-resources`、`dsh-plugin-manager`、
+  `dsh-workflow-ptc`、`dsh-atomic-write` 与两个 agent-team profile 包）
 - 依赖同步：`@deepseek-ai/cordis-plugin-group` → `1.0.2`、`dshmarket` → `1.45.1`
 - `scripts/prepare-dependencies.mjs`：3 处硬失败改为容错跳过（上游变更不再中断安装）
   - `@deepseek-ai/dsh-host-apiproxy` 在 DSH 0.1.2+ 已停止发布 → 目标缺失时跳过该补丁
@@ -48,7 +53,7 @@
 
 ```powershell
 npm install --force
-# 必须 --force：dshmarket 的 peerDependencies 只声明到 DSH 0.1.2-alpha.2，与 0.1.5 冲突。
+# 必须 --force：dshmarket 的 peerDependencies 只声明到 DSH 0.1.2-alpha.2，与 0.1.6 冲突。
 # 切勿使用 --legacy-peer-deps：它会跳过 peer 安装，导致 dsh-jobs / dsh-settings 等缺失、
 # 整棵插件树加载失败（表现为 dsh web 起不来）。
 
@@ -63,8 +68,8 @@ npm run dist:win
 
 ### 已知限制（本 fork）
 
-- `@dsh-external/dsh-automation`（定时任务调度）在 DSH 0.1.5 下注册 RPC 时会访问 `owner.webServer`，
-  因 0.1.5 收紧了权限（未 `inject` 即报 `cannot get property "webServer" without inject`）
+- `@dsh-external/dsh-automation`（定时任务调度）在 DSH 0.1.5 及以后注册 RPC 时会访问 `owner.webServer`，
+  因权限收紧（未 `inject` 即报 `cannot get property "webServer" without inject`）
   而导致**整棵插件树加载失败**。需在 profile 的 `cordis.patch.yml` 中将其 `disabled: true`；
   上游该插件（0.1.7）尚未适配。
 - 打包产物未做代码签名，Windows SmartScreen 可能提示。
@@ -74,7 +79,7 @@ DeepSeek Harness Desktop 将官方 DeepSeek Harness Web 体验封装为独立桌
 本项目专注于桌面宿主能力，不 fork、不修改、不注入，也不重新实现 Harness UI。模型、会话、设置、插件和 Agent 能力均由官方 `@deepseek-ai/dsh` 提供。
 
 > [!IMPORTANT]
-> 本项目是非官方社区封装，目前仍属于早期版本，并依赖快速演进中的 `@deepseek-ai/dsh@0.1.5-rc.2`。macOS 构建尚未经过 Apple 公证，Windows 构建尚未进行商业代码签名。
+> 本项目是非官方社区封装，目前仍属于早期版本，并依赖快速演进中的 `@deepseek-ai/dsh@0.1.6-alpha.2`。macOS 构建尚未经过 Apple 公证，Windows 构建尚未进行商业代码签名。
 
 ## 下载
 
@@ -208,11 +213,11 @@ DeepSeek Harness Desktop
 - Windows 尚未接入商业代码签名，首次启动可能出现 SmartScreen
 - 尚未提供 Windows ARM64 和 Linux ARM64 构建
 - 尚未集成自动更新
-- 本 fork 版本号（`0.3.9`）已领先上游（`0.3.8`）；更早的 fork 构建与上游同为 `0.3.8`，如果你手上有旧文件，请按内置 DSH 版本判断（`0.1.5-rc.2` = 本 fork，`0.1.1-rc.2` = 上游）
+- 本 fork 版本号（`0.3.10`）已领先上游（`0.3.8`）；更早的 fork 构建与上游同为 `0.3.8`，如果你手上有旧文件，请按内置 DSH 版本判断（`0.1.6-alpha.2` / `0.1.5-rc.2` = 本 fork，`0.1.1-rc.2` = 上游）
 
 ## 上游版本与许可
 
-当前固定使用 `@deepseek-ai/dsh@0.1.5-rc.2`，以保证打包结果可复现。
+当前固定使用 `@deepseek-ai/dsh@0.1.6-alpha.2`，以保证打包结果可复现。
 
 桌面封装采用 [MIT License](LICENSE)。内置的 DeepSeek Harness、dsh-market 与 pnpm 同样采用 MIT License，其许可声明保存在 [`third-party-licenses`](third-party-licenses)。
 

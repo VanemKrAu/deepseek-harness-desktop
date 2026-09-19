@@ -4,6 +4,7 @@ import {
   DSH_MARKET_VERSION,
   encodeWindowsOpenCommand,
   patchDshManifest,
+  patchPermissionGlyph,
   patchSettingsMarketNavIcon,
   patchWindowsPathOpener,
 } from '../scripts/prepare-dependencies.mjs'
@@ -73,4 +74,44 @@ test('DSH dependency fallback includes the bundled plugin market', () => {
     dshmarket: DSH_MARKET_VERSION,
   })
   assert.equal(patchDshManifest(patched), patched)
+})
+
+// 模拟 DSH 0.1.6 的 permission glyph Map：制表符缩进，最后一项是 FULL_ACCESS_PRESET。
+// 这张表在 0.1.6 从 dsh-client-ui-conversation 搬到了 dsh-client-ui-permission-presets。
+const PERMISSION_SOURCE = `\t\tconst permissionGlyphs = new Map([
+\t\t\t["read-only", (0, react_jsx_runtime.jsxs)("svg", {
+\t\t\t\tchildren: [(0, react_jsx_runtime.jsx)("path", {
+\t\t\t\t\td: _deepseek_ai_dsh_client_ui_primitives.SHIELD_OUTLINE_PATH,
+\t\t\t\t\tstroke: "currentColor"
+\t\t\t\t})]
+\t\t\t})],
+\t\t\t[FULL_ACCESS_PRESET, (0, react_jsx_runtime.jsxs)("svg", {
+\t\t\t\tchildren: [(0, react_jsx_runtime.jsx)("path", {
+\t\t\t\t\td: "M9.10094 4.5V8.75939H7.59888V4.5H9.10094Z",
+\t\t\t\t\tfill: "currentColor"
+\t\t\t\t}), (0, react_jsx_runtime.jsx)("path", {
+\t\t\t\t\td: "M9.10094 9.8114V11.5H7.59888V9.8114H9.10094Z",
+\t\t\t\t\tfill: "currentColor"
+\t\t\t\t})]
+\t\t\t})]
+\t\t]);`
+
+test('permission glyph patch appends the auto-approve entry inside the glyph map', () => {
+  const patched = patchPermissionGlyph(PERMISSION_SOURCE)
+  assert.match(patched, /\["auto-approve"/)
+  assert.match(patched, /M9\.8 4L6\.4 8\.7H8\.1L7 11\.9/)
+  // 注入必须落在 Map 内部：auto-approve 项之后紧跟 Map 的收尾
+  assert.match(patched, /\["auto-approve"[\s\S]*\t\t\t\}\)\]\n\t\t\]\);/)
+  // 原有成员不能丢
+  assert.match(patched, /\["read-only"/)
+  assert.match(patched, /\[FULL_ACCESS_PRESET/)
+  // 幂等
+  assert.equal(patchPermissionGlyph(patched), patched)
+})
+
+test('permission glyph patch fails loudly when upstream implementation drifts', () => {
+  assert.throws(
+    () => patchPermissionGlyph('const permissionGlyphs = new Map([])'),
+    /Expected the full-access permission glyph/,
+  )
 })

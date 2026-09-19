@@ -37,13 +37,17 @@ export const REQUIRED_UPSTREAM_PACKAGES = [
   '@deepseek-ai/dsh-attachment',
   '@deepseek-ai/dsh-authorization',
   '@deepseek-ai/dsh-bash-local',
-  '@deepseek-ai/dsh-code-runtime',
   '@deepseek-ai/dsh-compaction',
+  '@deepseek-ai/dsh-experimental-agent-team-profile',
+  '@deepseek-ai/dsh-experimental-agent-team-web-profile',
   '@deepseek-ai/dsh-fs',
+  '@deepseek-ai/dsh-hmr',
   '@deepseek-ai/dsh-hook-protocol',
   '@deepseek-ai/dsh-invariants',
   '@deepseek-ai/dsh-jobs',
+  '@deepseek-ai/dsh-mcp-resources',
   '@deepseek-ai/dsh-output-retention',
+  '@deepseek-ai/dsh-plugin-manager',
   '@deepseek-ai/dsh-sandbox',
   '@deepseek-ai/dsh-scope',
   '@deepseek-ai/dsh-sdk-protocol',
@@ -60,6 +64,7 @@ export const REQUIRED_UPSTREAM_PACKAGES = [
   '@deepseek-ai/dsh-util-time',
   '@deepseek-ai/dsh-util-workspace-path',
   '@deepseek-ai/dsh-workflow',
+  '@deepseek-ai/dsh-workflow-ptc',
 ]
 
 export function updateUpstreamDependencies(manifest, targetVersion, {
