@@ -72,6 +72,12 @@ npm run dist:win
   因权限收紧（未 `inject` 即报 `cannot get property "webServer" without inject`）
   而导致**整棵插件树加载失败**。需在 profile 的 `cordis.patch.yml` 中将其 `disabled: true`；
   上游该插件（0.1.7）尚未适配。
+- `dsh-at-file`（@ 文件引用）在 DSH 0.1.6 及以后加载失败：0.1.6 的 `dsh-typert-registry` 把 strict codec
+  的校验从「必须有 `schema.parse`」改成了「必须有 `create()` 工厂」，而该插件（0.7.0，上游最新版）
+  仍在用旧的 `schema:` 写法，注册 RPC 时抛
+  `typert: dsh-at-file#atFile/search result strict codec has no create() factory`，
+  同样会导致**整棵插件树加载失败**。临时办法是给其 `lib/index.js` 里每处 strict codec
+  补上 `create: () => <同一个 schema>`（保留 `schema` 以兼容 0.1.5），或先禁用该插件。
 - 打包产物未做代码签名，Windows SmartScreen 可能提示。
 
 DeepSeek Harness Desktop 将官方 DeepSeek Harness Web 体验封装为独立桌面应用。无需手动启动 CLI 或管理端口，打开应用即可使用完整 Harness 界面。

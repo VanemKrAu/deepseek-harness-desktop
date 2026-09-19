@@ -71,6 +71,13 @@ a full Visual Studio + Windows SDK toolchain.
 registration accesses `owner.webServer` without injecting it, which aborts the entire plugin tree;
 disable it in the profile's `cordis.patch.yml` until upstream adapts.
 
+**Known limitation**: `dsh-at-file` fails to load on DSH 0.1.6 and later. `dsh-typert-registry` changed its
+strict-codec requirement from `schema.parse` to a mandatory `create()` factory, while the plugin (0.7.0,
+the newest upstream release) still declares its codecs with the old `schema:` form. Registering its RPC
+throws `typert: dsh-at-file#atFile/search result strict codec has no create() factory`, which aborts the
+entire plugin tree. Workaround: add `create: () => <same schema>` to every strict codec in its `lib/index.js`
+(keeping `schema` for 0.1.5 compatibility), or disable the plugin.
+
 DeepSeek Harness Desktop packages the official DeepSeek Harness Web experience as a standalone desktop application. It removes the need to start the CLI manually or manage local ports while preserving the full Harness interface.
 
 This project focuses on desktop hosting. It does not fork, modify, inject into, or reimplement the Harness UI. Models, sessions, settings, plugins, and agent capabilities remain provided by the official `@deepseek-ai/dsh` package.
