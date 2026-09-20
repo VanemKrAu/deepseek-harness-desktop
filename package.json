@@ -27,13 +27,14 @@
     "build:win-launcher": "powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File scripts/build-windows-launcher.ps1",
     "test:win-console": "node scripts/test-windows-hidden-console.mjs",
     "smoke:packaged": "node scripts/smoke-packaged.mjs",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder",
+    "clean:dist": "node scripts/clean-dist.mjs",
+    "pack": "node scripts/clean-dist.mjs && electron-builder --dir",
+    "dist": "node scripts/clean-dist.mjs && electron-builder",
     "dist:mac": "npm run dist:mac:arm64",
-    "dist:mac:arm64": "electron-builder --mac dmg zip --arm64 --publish never",
-    "dist:mac:x64": "electron-builder --mac dmg zip --x64 --publish never",
-    "dist:win": "npm run prepare:windows && electron-builder --win nsis zip --x64 --publish never",
-    "dist:linux": "electron-builder --linux AppImage deb --x64 --publish never"
+    "dist:mac:arm64": "node scripts/clean-dist.mjs && electron-builder --mac dmg zip --arm64 --publish never",
+    "dist:mac:x64": "node scripts/clean-dist.mjs && electron-builder --mac dmg zip --x64 --publish never",
+    "dist:win": "node scripts/clean-dist.mjs && npm run prepare:windows && electron-builder --win nsis zip --x64 --publish never",
+    "dist:linux": "node scripts/clean-dist.mjs && electron-builder --linux AppImage deb --x64 --publish never"
   },
   "dependencies": {
     "@deepseek-ai/cordis-plugin-group": "1.0.2",
