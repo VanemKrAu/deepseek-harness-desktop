@@ -1,7 +1,7 @@
 {
   "name": "deepseek-harness-desktop",
   "version": "0.3.11",
-  "description": "An unofficial desktop wrapper for DeepSeek Harness.",
+  "description": "[DEPRECATED] An unofficial desktop wrapper for DeepSeek Harness. This fork is discontinued — use the official desktop app: https://www.deepseek.com/download/",
   "type": "module",
   "main": "src/main.js",
   "author": {
@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/agent-earth/deepseek-harness-desktop.git"
   },
-  "homepage": "https://deepseek-harness-desktop.vercel.app",
+  "homepage": "https://www.deepseek.com/download/",
   "bugs": {
     "url": "https://github.com/agent-earth/deepseek-harness-desktop/issues"
   },

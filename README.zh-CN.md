@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://deepseek-harness-desktop.vercel.app"><strong>官方网站</strong></a>
+  ⚠️ <strong>本 fork 已废弃</strong> · <a href="https://www.deepseek.com/download/"><strong>前往官方桌面端下载 →</strong></a>
 </p>
 
 <p align="center">
@@ -27,6 +27,19 @@
 </p>
 
 <img width="2880" height="1882" alt="DeepSeek Harness Desktop 截图" src="https://github.com/user-attachments/assets/4252ec13-c09b-4e74-996f-cf4d1bcb74c8" />
+
+> [!WARNING]
+> ## ⚠️ 本仓库已废弃（DEPRECATED），请改用 DeepSeek 官方桌面端
+>
+> DeepSeek 官方已正式发布 **DeepSeek Harness 桌面端**。本 fork 当初存在的唯一理由——上游 release 长期停留在 `0.1.1-rc.2`、需要自行升级内置 DSH 并修复打包流程——已经消失。
+>
+> **官方下载入口：**
+>
+> - 🌐 **官方下载页**：<https://www.deepseek.com/download/>
+> - 🪟 **Windows x64**：<https://download.deepseek.com/desktop/dsh-latest-windows-x64.exe>
+> - 🍎 **macOS（Apple 芯片）**：<https://download.deepseek.com/desktop/dsh-latest-macos-arm64.dmg>
+>
+> 官方桌面端在功能完整度、更新频率与安全性上均优于本 fork（官方版已内置 `0.2.0-rc.2` 及插件管理、权限审批、GenUI 等能力）。**本仓库仅作历史存档保留**：不再更新、不再处理 issue 与 PR，下方列出的安装包与构建说明也仅供回溯查阅，**不建议继续使用**。
 
 > [!NOTE]
 > **本仓库是定制 fork**，基于 [agent-earth/deepseek-harness-desktop](https://github.com/agent-earth/deepseek-harness-desktop)（原作者 Steven，MIT 许可与署名保留）。因原仓库 release 长期停留在 `0.1.1-rc.2`，本 fork 自行完成了上游 DSH 升级与打包修复。

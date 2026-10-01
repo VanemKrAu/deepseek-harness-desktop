@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://deepseek-harness-desktop.vercel.app"><strong>Official Website</strong></a>
+  ⚠️ <strong>Deprecated</strong> · <a href="https://www.deepseek.com/download/"><strong>Get the official desktop app →</strong></a>
 </p>
 
 <p align="center">
@@ -27,6 +27,19 @@
 </p>
 
 <img width="2880" height="1882" alt="image" src="https://github.com/user-attachments/assets/4252ec13-c09b-4e74-996f-cf4d1bcb74c8" />
+
+> [!WARNING]
+> ## ⚠️ This repository is DEPRECATED — please use the official DeepSeek desktop app
+>
+> DeepSeek has officially released the **DeepSeek Harness desktop app**. The sole reason this fork existed — upstream releases being pinned to `0.1.1-rc.2`, which required a self-managed bundled-DSH upgrade and build fixes — no longer applies.
+>
+> **Official download:**
+>
+> - 🌐 **Official download page**: <https://www.deepseek.com/download/>
+> - 🪟 **Windows x64**: <https://download.deepseek.com/desktop/dsh-latest-windows-x64.exe>
+> - 🍎 **macOS (Apple silicon)**: <https://download.deepseek.com/desktop/dsh-latest-macos-arm64.dmg>
+>
+> The official build is ahead of this fork in features, update cadence and security (it already ships `0.2.0-rc.2` with plugin management, permission presets, GenUI and more). **This repository is kept for historical reference only**: no further updates, issues or PRs. The installers and build notes below are retained for archival purposes and are **not recommended for continued use**.
 
 > [!NOTE]
 > **Custom fork** of [agent-earth/deepseek-harness-desktop](https://github.com/agent-earth/deepseek-harness-desktop) (original author Steven; MIT license and attribution preserved). Because upstream releases remained pinned to `0.1.1-rc.2`, this fork performs the bundled-DSH upgrade and the build fixes itself.
